@@ -27,7 +27,7 @@ public class FogDensityController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && !isFading && Time.time >= lastActivationTime)
+        if (Input.GetMouseButtonDown(1) && !isFading && Time.time >= lastActivationTime)
         {
             StartCoroutine(FadeFogDensity());
         }
