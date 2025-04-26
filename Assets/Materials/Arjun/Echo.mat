@@ -110,7 +110,7 @@ Material:
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.01
     - _Parallax: 0.005
-    - _PulseRadius: 29.411095
+    - _PulseRadius: 0
     - _PulseWidth: 1.5
     - _QueueOffset: 0
     - _ReceiveShadows: 1
