@@ -45,14 +45,11 @@ public class FirstPersonController : MonoBehaviour
     void HandleLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        verticalRotation -= mouseY;
-        verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
-
-        cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        // Only rotate the player left and right (around Y-axis)
         transform.Rotate(Vector3.up * mouseX);
     }
+
 
     void HandleInput()
     {
@@ -70,10 +67,7 @@ public class FirstPersonController : MonoBehaviour
             }
         }
 
-        if (isHoldingRightClick && Input.GetMouseButtonDown(1)) // Dash trigger
-        {
-            StartDash();
-        }
+        
     }
 
     void HandleMovement()
@@ -109,26 +103,35 @@ public class FirstPersonController : MonoBehaviour
     {
         Debug.Log("Shotgun Fired!");
 
-        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        RaycastHit hit;
+        Vector3 origin = cameraTransform.position;
+        Vector3 direction = cameraTransform.forward;
+        float radius = 0.5f; // wideness of the shotgun blast
+        float range = shootingDistance; // how far the shotgun can reach
 
-        if (Physics.Raycast(ray, out hit, shootingDistance)) // 100 units range
+        RaycastHit[] hits = Physics.SphereCastAll(origin, radius, direction, range);
+
+        bool hitEnemy = false;
+
+        foreach (var hit in hits)
         {
             if (hit.collider.CompareTag("Enemy"))
             {
-                Debug.Log("Enemy Hit! ");
-                Destroy(hit.collider.gameObject); // Destroy the enemy
+                Debug.Log("Enemy Hit: " + hit.collider.name);
+                Destroy(hit.collider.gameObject);
+                hitEnemy = true;
             }
             else
             {
                 Debug.Log("Hit something else: " + hit.collider.name);
             }
         }
-        else
+
+        if (!hitEnemy)
         {
             Debug.Log("Missed!");
         }
     }
+
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
@@ -149,9 +152,9 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Die()
     {
-        Debug.Log("☠️ Player Died!");
+        Time.timeScale = 0;
         // Here you can reload scene, show death screen, etc.
     }
 
